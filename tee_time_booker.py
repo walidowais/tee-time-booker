@@ -23,12 +23,13 @@ class TeeTimeBooker:
         self.base_url = "https://foreupsoftware.com/index.php/booking/20954#/login"
         self.browser = None
         self.page = None
+        self.headless = False  # Can be set to True for cloud environments
 
     async def start_browser(self):
         """Initialize browser and page"""
         self.playwright = await async_playwright().start()
         # Use chromium for better compatibility
-        self.browser = await self.playwright.chromium.launch(headless=False)  # Set to True for headless
+        self.browser = await self.playwright.chromium.launch(headless=self.headless)
         self.page = await self.browser.new_page()
 
         # Set a realistic user agent
@@ -266,6 +267,7 @@ class TeeTimeBooker:
 
     async def run(self):
         """Main execution method"""
+        success = False
         try:
             await self.start_browser()
 
@@ -284,15 +286,19 @@ class TeeTimeBooker:
             else:
                 logger.error("Failed to find suitable tee time")
 
-            # Keep browser open for a moment to see results
-            await self.page.wait_for_timeout(10000)
+            # Keep browser open for a moment to see results (only if not headless)
+            if not self.headless:
+                await self.page.wait_for_timeout(10000)
 
         except Exception as e:
             logger.error(f"An error occurred: {e}")
             if self.page:
                 await self.page.screenshot(path="debug_error.png")
+            success = False
         finally:
             await self.close_browser()
+
+        return success
 
 async def main():
     """Entry point"""

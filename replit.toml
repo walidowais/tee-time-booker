@@ -1,0 +1,13 @@
+# Replit configuration
+run = "python web_server.py"
+language = "python3"
+
+[nix]
+channel = "stable-22_11"
+
+[deployment]
+run = ["gunicorn", "--bind", "0.0.0.0:5000", "web_server:app"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80

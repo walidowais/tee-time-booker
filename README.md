@@ -1,15 +1,15 @@
 # Tee Time Booking Automation
 
-This automation script books tee times on the ForeuP software booking system (foreupsoftware.com/booking/20945).
+This automation script books tee times on the ForeuP software booking system. It can run locally or as a cloud-based web service triggered by cron jobs.
 
 ## Features
 
 - Automatically logs in with provided credentials
-- Selects "Resident Adult (4-14 Days) Advance" rate
-- Chooses a date 14 days from the current date
+- Chooses a date 5 days from the current date
 - Finds the first available tee time before 10:30 AM with minimum 2 players
 - Configures booking for maximum players and no carts
 - Completes the booking automatically
+- **NEW**: Web server for cloud deployment and cron job triggers
 
 ## Setup
 
@@ -23,19 +23,39 @@ This automation script books tee times on the ForeuP software booking system (fo
    source venv/bin/activate
    ```
 
-## Usage
+## Usage Options
 
-Run the booking automation:
+### Option 1: Local Execution
+Run the booking automation directly:
 ```bash
 python tee_time_booker.py
 ```
 
-The script will:
-1. Open a browser window (so you can see the automation in action)
-2. Navigate to the booking website
-3. Log in with the configured credentials
-4. Navigate through the booking process
-5. Attempt to book a suitable tee time
+### Option 2: Web Server + Cron Jobs (Recommended)
+For automated daily bookings:
+
+1. **Start the web server locally**:
+   ```bash
+   python web_server.py
+   ```
+
+2. **Test the web endpoints**:
+   ```bash
+   python test_server.py
+   ```
+
+3. **Deploy to cloud and set up cron job**:
+   - See [CRON_SETUP.md](CRON_SETUP.md) for detailed instructions
+   - Deploy to Replit, Heroku, or similar platform
+   - Use cron-job.org to trigger daily bookings
+
+### Web Server Endpoints
+
+- `GET /` - Service status and information
+- `GET /run` - Trigger tee time booking
+- `GET /run?test=true` - Test mode (doesn't actually book)
+- `GET /status` - Check last booking result
+- `GET /health` - Health check
 
 ## Configuration
 
